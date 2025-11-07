@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastro de Pacientes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      padding: 30px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    form {
+      background: white;
+      max-width: 500px;
+      margin: 20px auto;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #mensagem {
+      text-align: center;
+      margin-top: 15px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cadastro de Pacientes</h1>
+  <form id="cadastroForm">
+    <label>Nome do Paciente:</label>
+    <input type="text" name="nome" required>
+
+    <label>CPF:</label>
+    <input type="text" name="cpf">
+
+    <label>Data de Nascimento:</label>
+    <input type="date" name="data_nascimento">
+
+    <label>Tipo de Tratamento:</label>
+    <input type="text" name="tratamento">
+
+    <label>Preço da Consulta:</label>
+    <input type="number" step="0.01" name="preco">
+
+    <label>Data da Consulta:</label>
+    <input type="date" name="data_consulta">
+
+    <label>Anotações:</label>
+    <textarea name="anotacao" rows="4" placeholder="Digite observações..."></textarea>
+
+    <button type="submit">Salvar Paciente</button>
+  </form>
+  <div id="mensagem"></div>
+
+  <script>
+    document.getElementById("cadastroForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const dados = new FormData(form);
+      const mensagem = document.getE
