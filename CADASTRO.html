@@ -6,107 +6,125 @@
   <title>Consulta de Pacientes</title>
   <style>
     :root {
-      --cor-primaria: #0066ff;
-      --cor-secundaria: #f5f7fb;
-      --cor-sucesso: #28a745;
-      --cor-erro: #dc3545;
-      --cor-texto: #333;
-      --radius: 12px;
+      --roxo-escuro: #2e1968;
+      --roxo-medio: #6b4ad8;
+      --roxo-claro: #f4f2fc;
+      --texto: #333;
+      --sucesso: #28a745;
+      --erro: #dc3545;
+      --radius: 14px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+    * {
+      box-sizing: border-box;
+      font-family: "Poppins", "Segoe UI", sans-serif;
+    }
 
     body {
-      background: var(--cor-secundaria);
+      background: var(--roxo-claro);
+      color: var(--texto);
+      margin: 0;
+      display: flex;
+      height: 100vh;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .sidebar {
+      background: var(--roxo-escuro);
+      color: white;
+      width: 240px;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .menu a {
+      color: #ddd;
+      text-decoration: none;
+      display: block;
+      padding: 10px 15px;
+      border-radius: var(--radius);
+      transition: background 0.2s;
+    }
+
+    .menu a:hover, .menu a.active {
+      background: var(--roxo-medio);
+      color: #fff;
+    }
+
+    /* ===== CONTEÚDO ===== */
+    main {
+      flex: 1;
       padding: 40px;
-      color: var(--cor-texto);
+      overflow-y: auto;
     }
 
     h1 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 30px;
-      color: var(--cor-primaria);
+      font-size: 1.6rem;
+      color: var(--roxo-escuro);
+      margin-bottom: 25px;
     }
 
-    form, .dados {
+    .container {
       background: #fff;
-      padding: 25px 30px;
       border-radius: var(--radius);
-      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-      max-width: 650px;
-      margin: 20px auto;
-      transition: transform .2s ease;
-    }
-
-    form:hover, .dados:hover {
-      transform: translateY(-3px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      padding: 30px;
+      max-width: 800px;
+      margin: auto;
     }
 
     label {
       font-weight: 600;
-      color: #444;
       margin-top: 15px;
       display: block;
     }
 
-    input, textarea, select {
+    select, input, textarea {
       width: 100%;
       padding: 10px;
-      margin-top: 6px;
+      border-radius: var(--radius);
       border: 1px solid #ccc;
-      border-radius: 8px;
+      margin-top: 5px;
       font-size: 0.95rem;
-      transition: border-color .3s;
     }
 
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--cor-primaria);
+    select:focus, input:focus, textarea:focus {
+      border-color: var(--roxo-medio);
       outline: none;
     }
 
     button {
-      display: inline-block;
-      width: 100%;
-      margin-top: 25px;
-      padding: 12px;
-      font-weight: bold;
-      color: #fff;
+      margin-top: 20px;
+      background: var(--roxo-medio);
+      color: white;
       border: none;
-      border-radius: 8px;
+      padding: 12px;
       font-size: 1rem;
+      border-radius: var(--radius);
       cursor: pointer;
-      transition: background .3s ease;
+      width: 100%;
+      transition: background 0.3s;
     }
 
-    #buscaForm button { background: var(--cor-primaria); }
-    #buscaForm button:hover { background: #0048b8; }
-
-    #novaSessao button { background: var(--cor-sucesso); }
-    #novaSessao button:hover { background: #1f8c3b; }
-
-    h2, h3 {
-      color: var(--cor-primaria);
-      margin-top: 25px;
-      border-bottom: 1px solid #e0e0e0;
-      padding-bottom: 5px;
-    }
-
-    .dados p {
-      margin: 8px 0;
-      font-size: 0.95rem;
-    }
-
-    .historico {
-      margin-top: 15px;
-      border-radius: 8px;
-      overflow-x: auto;
+    button:hover {
+      background: #5531c7;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
+      margin-top: 20px;
     }
 
     th, td {
@@ -117,98 +135,111 @@
     }
 
     th {
-      background: #f0f4ff;
-      color: #0048b8;
-      font-weight: 600;
+      background: #f4f2fc;
+      color: var(--roxo-escuro);
     }
 
-    tr:hover {
-      background: #f9f9f9;
-    }
+    .status-sim { color: var(--sucesso); font-weight: bold; }
+    .status-nao { color: var(--erro); font-weight: bold; }
 
     #mensagem {
-      margin-top: 15px;
-      font-weight: bold;
       text-align: center;
+      font-weight: 600;
+      margin-top: 15px;
     }
-
-    .status-sim { color: var(--cor-sucesso); font-weight: bold; }
-    .status-nao { color: var(--cor-erro); font-weight: bold; }
   </style>
 </head>
 <body>
-  <h1>Consulta e Cadastro de Pacientes</h1>
+  <aside class="sidebar">
+    <div class="logo">🩺 GoClin</div>
+    <nav class="menu">
+      <a href="#" class="active">Agenda</a>
+      <a href="#">Pacientes</a>
+      <a href="#">Tratamentos</a>
+      <a href="#">Financeiro</a>
+      <a href="#">Configurações</a>
+    </nav>
+  </aside>
 
-  <form id="buscaForm">
-    <label>Buscar paciente pelo nome:</label>
-    <input type="text" id="buscaNome" required placeholder="Digite o nome completo">
-    <button type="submit">🔍 Buscar</button>
-  </form>
+  <main>
+    <h1>Consulta e Cadastro de Pacientes</h1>
 
-  <div id="dadosPaciente" class="dados" style="display:none;">
-    <h2>Dados do Paciente</h2>
-    <p><b>Nome:</b> <span id="pNome"></span></p>
-    <p><b>CPF:</b> <span id="pCPF"></span></p>
-    <p><b>Tratamento:</b> <span id="pTratamento"></span></p>
-    <p><b>Preço da Sessão:</b> R$ <span id="pPreco"></span></p>
-    <p><b>Sessões neste mês:</b> <span id="pSessoes"></span></p>
-    <p><b>Total no mês:</b> R$ <span id="pTotal"></span></p>
+    <div class="container">
+      <form id="buscaForm">
+        <label>Selecione o Paciente:</label>
+        <select id="listaPacientes" required>
+          <option value="">Carregando lista...</option>
+        </select>
+        <button type="submit">Carregar Dados</button>
+      </form>
 
-    <h3>Histórico de Sessões</h3>
-    <div class="historico">
-      <table id="tabelaHistorico">
-        <thead>
-          <tr>
-            <th>Data</th>
-            <th>Anotação</th>
-            <th>Compareceu?</th>
-          </tr>
-        </thead>
-        <tbody id="pHistorico"></tbody>
-      </table>
+      <div id="dadosPaciente" style="display:none;">
+        <h2>Dados do Paciente</h2>
+        <p><b>Nome:</b> <span id="pNome"></span></p>
+        <p><b>CPF:</b> <span id="pCPF"></span></p>
+        <p><b>Tratamento:</b> <span id="pTratamento"></span></p>
+        <p><b>Preço:</b> R$ <span id="pPreco"></span></p>
+
+        <h3>Histórico</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Anotação</th>
+              <th>Compareceu</th>
+            </tr>
+          </thead>
+          <tbody id="pHistorico"></tbody>
+        </table>
+
+        <h3>Registrar Nova Sessão</h3>
+        <form id="novaSessao">
+          <label>Data:</label>
+          <input type="date" name="data_sessao" required>
+
+          <label>Anotação:</label>
+          <textarea name="anotacao" rows="3"></textarea>
+
+          <label>Compareceu?</label>
+          <select name="compareceu" required>
+            <option value="">Selecione</option>
+            <option value="Sim">Sim</option>
+            <option value="Não">Não</option>
+          </select>
+
+          <button type="submit">💾 Salvar Sessão</button>
+        </form>
+        <p id="mensagem"></p>
+      </div>
     </div>
-
-    <h3>Registrar Nova Sessão</h3>
-    <form id="novaSessao">
-      <input type="hidden" name="nome" id="nNome">
-      <input type="hidden" name="cpf" id="nCPF">
-      <input type="hidden" name="data_nascimento" id="nNasc">
-      <input type="hidden" name="tratamento" id="nTrat">
-      <input type="hidden" name="preco" id="nPreco">
-
-      <label>Data da Sessão:</label>
-      <input type="date" name="data_sessao" required>
-
-      <label>Anotação (opcional):</label>
-      <textarea name="anotacao" rows="3" placeholder="Anotações da sessão..."></textarea>
-
-      <label>Compareceu à consulta?</label>
-      <select name="compareceu" required>
-        <option value="">Selecione</option>
-        <option value="Sim">Sim</option>
-        <option value="Não">Não</option>
-      </select>
-
-      <button type="submit">💾 Salvar Sessão</button>
-    </form>
-    <p id="mensagem"></p>
-  </div>
+  </main>
 
   <script>
     const scriptURL = "https://script.google.com/macros/s/AKfycbxwiOvj9ffd8Tn2SA0CaATKduzRocduv9Cd6pwdwrVGzDuaScc-2qpTc2_XLF7PkyrX/exec";
 
+    // Carrega lista de pacientes ao iniciar
+    window.addEventListener("DOMContentLoaded", async () => {
+      const lista = document.getElementById("listaPacientes");
+      try {
+        const res = await fetch(${scriptURL}?acao=listarPacientes);
+        const pacientes = await res.json();
+        pacientes.sort((a, b) => a.nome.localeCompare(b.nome));
+
+        lista.innerHTML = '<option value="">Selecione um paciente...</option>' +
+          pacientes.map(p => <option value="${p.nome}">${p.nome}</option>).join("");
+      } catch (err) {
+        lista.innerHTML = '<option value="">Erro ao carregar lista</option>';
+      }
+    });
+
     document.getElementById("buscaForm").addEventListener("submit", async e => {
       e.preventDefault();
-      const nome = document.getElementById("buscaNome").value.trim();
+      const nome = document.getElementById("listaPacientes").value;
       if (!nome) return;
-
-      document.getElementById("dadosPaciente").style.display = "none";
-      document.getElementById("pHistorico").innerHTML = "<tr><td colspan='3'>🔄 Buscando...</td></tr>";
 
       try {
         const res = await fetch(${scriptURL}?nome=${encodeURIComponent(nome)});
         const dados = await res.json();
-
         if (dados.erro) {
           alert(dados.erro);
           return;
@@ -220,14 +251,6 @@
         document.getElementById("pCPF").textContent = p.cpf;
         document.getElementById("pTratamento").textContent = p.tratamento;
         document.getElementById("pPreco").textContent = parseFloat(p.preco).toFixed(2);
-        document.getElementById("pSessoes").textContent = dados.sessoesNoMes;
-        document.getElementById("pTotal").textContent = parseFloat(dados.totalMes).toFixed(2);
-
-        document.getElementById("nNome").value = p.nome;
-        document.getElementById("nCPF").value = p.cpf;
-        document.getElementById("nNasc").value = p.data_nascimento;
-        document.getElementById("nTrat").value = p.tratamento;
-        document.getElementById("nPreco").value = p.preco;
 
         const historicoHTML = dados.historico.map(h => `
           <tr>
@@ -236,36 +259,11 @@
             <td class="${h.compareceu === 'Sim' ? 'status-sim' : 'status-nao'}">${h.compareceu || "Não informado"}</td>
           </tr>
         `).join("");
-        document.getElementById("pHistorico").innerHTML = historicoHTML || "<tr><td colspan='3'>Nenhum histórico encontrado.</td></tr>";
-      } catch (error) {
-        alert("Erro ao conectar com o servidor.");
-      }
-    });
 
-    document.getElementById("novaSessao").addEventListener("submit", async e => {
-      e.preventDefault();
-      const form = e.target;
-      const formData = new FormData(form);
-      formData.append("acao", "registrarSessao");
+        document.getElementById("pHistorico").innerHTML = historicoHTML || "<tr><td colspan='3'>Nenhum histórico</td></tr>";
 
-      const msg = document.getElementById("mensagem");
-      msg.textContent = "Enviando...";
-      msg.style.color = "blue";
-
-      try {
-        const res = await fetch(scriptURL, { method: "POST", body: formData });
-        const result = await res.json();
-        if (result.sucesso) {
-          msg.textContent = "✅ Sessão registrada com sucesso!";
-          msg.style.color = "green";
-          form.reset();
-        } else {
-          msg.textContent = result.erro || "Erro ao registrar sessão.";
-          msg.style.color = "red";
-        }
       } catch {
-        msg.textContent = "❌ Falha na comunicação com o servidor.";
-        msg.style.color = "red";
+        alert("Erro ao buscar paciente");
       }
     });
   </script>
