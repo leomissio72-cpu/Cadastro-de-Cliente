@@ -1,271 +1,54 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consulta de Pacientes</title>
-  <style>
-    :root {
-      --roxo-escuro: #2e1968;
-      --roxo-medio: #6b4ad8;
-      --roxo-claro: #f4f2fc;
-      --texto: #333;
-      --sucesso: #28a745;
-      --erro: #dc3545;
-      --radius: 14px;
-    }
-
-    * {
-      box-sizing: border-box;
-      font-family: "Poppins", "Segoe UI", sans-serif;
-    }
-
-    body {
-      background: var(--roxo-claro);
-      color: var(--texto);
-      margin: 0;
-      display: flex;
-      height: 100vh;
-    }
-
-    /* ===== SIDEBAR ===== */
-    .sidebar {
-      background: var(--roxo-escuro);
-      color: white;
-      width: 240px;
-      padding: 30px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 25px;
-    }
-
-    .logo {
-      font-weight: 700;
-      font-size: 1.3rem;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .menu a {
-      color: #ddd;
-      text-decoration: none;
-      display: block;
-      padding: 10px 15px;
-      border-radius: var(--radius);
-      transition: background 0.2s;
-    }
-
-    .menu a:hover, .menu a.active {
-      background: var(--roxo-medio);
-      color: #fff;
-    }
-
-    /* ===== CONTEÚDO ===== */
-    main {
-      flex: 1;
-      padding: 40px;
-      overflow-y: auto;
-    }
-
-    h1 {
-      font-size: 1.6rem;
-      color: var(--roxo-escuro);
-      margin-bottom: 25px;
-    }
-
-    .container {
-      background: #fff;
-      border-radius: var(--radius);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-      padding: 30px;
-      max-width: 800px;
-      margin: auto;
-    }
-
-    label {
-      font-weight: 600;
-      margin-top: 15px;
-      display: block;
-    }
-
-    select, input, textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: var(--radius);
-      border: 1px solid #ccc;
-      margin-top: 5px;
-      font-size: 0.95rem;
-    }
-
-    select:focus, input:focus, textarea:focus {
-      border-color: var(--roxo-medio);
-      outline: none;
-    }
-
-    button {
-      margin-top: 20px;
-      background: var(--roxo-medio);
-      color: white;
-      border: none;
-      padding: 12px;
-      font-size: 1rem;
-      border-radius: var(--radius);
-      cursor: pointer;
-      width: 100%;
-      transition: background 0.3s;
-    }
-
-    button:hover {
-      background: #5531c7;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    th, td {
-      border-bottom: 1px solid #eee;
-      padding: 10px;
-      text-align: left;
-      font-size: 0.9rem;
-    }
-
-    th {
-      background: #f4f2fc;
-      color: var(--roxo-escuro);
-    }
-
-    .status-sim { color: var(--sucesso); font-weight: bold; }
-    .status-nao { color: var(--erro); font-weight: bold; }
-
-    #mensagem {
-      text-align: center;
-      font-weight: 600;
-      margin-top: 15px;
-    }
-  </style>
-</head>
-<body>
-  <aside class="sidebar">
-    <div class="logo">🩺 GoClin</div>
-    <nav class="menu">
-      <a href="#" class="active">Agenda</a>
-      <a href="#">Pacientes</a>
-      <a href="#">Tratamentos</a>
-      <a href="#">Financeiro</a>
-      <a href="#">Configurações</a>
-    </nav>
-  </aside>
-
-  <main>
-    <h1>Consulta e Cadastro de Pacientes</h1>
-
-    <div class="container">
-      <form id="buscaForm">
-        <label>Selecione o Paciente:</label>
-        <select id="listaPacientes" required>
-          <option value="">Carregando lista...</option>
-        </select>
-        <button type="submit">Carregar Dados</button>
-      </form>
-
-      <div id="dadosPaciente" style="display:none;">
-        <h2>Dados do Paciente</h2>
-        <p><b>Nome:</b> <span id="pNome"></span></p>
-        <p><b>CPF:</b> <span id="pCPF"></span></p>
-        <p><b>Tratamento:</b> <span id="pTratamento"></span></p>
-        <p><b>Preço:</b> R$ <span id="pPreco"></span></p>
-
-        <h3>Histórico</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Anotação</th>
-              <th>Compareceu</th>
-            </tr>
-          </thead>
-          <tbody id="pHistorico"></tbody>
-        </table>
-
-        <h3>Registrar Nova Sessão</h3>
-        <form id="novaSessao">
-          <label>Data:</label>
-          <input type="date" name="data_sessao" required>
-
-          <label>Anotação:</label>
-          <textarea name="anotacao" rows="3"></textarea>
-
-          <label>Compareceu?</label>
-          <select name="compareceu" required>
-            <option value="">Selecione</option>
-            <option value="Sim">Sim</option>
-            <option value="Não">Não</option>
-          </select>
-
-          <button type="submit">💾 Salvar Sessão</button>
-        </form>
-        <p id="mensagem"></p>
-      </div>
-    </div>
-  </main>
-
-  <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxwiOvj9ffd8Tn2SA0CaATKduzRocduv9Cd6pwdwrVGzDuaScc-2qpTc2_XLF7PkyrX/exec";
-
-    // Carrega lista de pacientes ao iniciar
-    window.addEventListener("DOMContentLoaded", async () => {
-      const lista = document.getElementById("listaPacientes");
-      try {
-        const res = await fetch(${scriptURL}?acao=listarPacientes);
-        const pacientes = await res.json();
-        pacientes.sort((a, b) => a.nome.localeCompare(b.nome));
-
-        lista.innerHTML = '<option value="">Selecione um paciente...</option>' +
-          pacientes.map(p => <option value="${p.nome}">${p.nome}</option>).join("");
-      } catch (err) {
-        lista.innerHTML = '<option value="">Erro ao carregar lista</option>';
-      }
-    });
-
-    document.getElementById("buscaForm").addEventListener("submit", async e => {
-      e.preventDefault();
-      const nome = document.getElementById("listaPacientes").value;
-      if (!nome) return;
-
-      try {
-        const res = await fetch(${scriptURL}?nome=${encodeURIComponent(nome)});
-        const dados = await res.json();
-        if (dados.erro) {
-          alert(dados.erro);
-          return;
-        }
-
-        const p = dados.paciente;
-        document.getElementById("dadosPaciente").style.display = "block";
-        document.getElementById("pNome").textContent = p.nome;
-        document.getElementById("pCPF").textContent = p.cpf;
-        document.getElementById("pTratamento").textContent = p.tratamento;
-        document.getElementById("pPreco").textContent = parseFloat(p.preco).toFixed(2);
-
-        const historicoHTML = dados.historico.map(h => `
-          <tr>
-            <td>${h.data_sessao}</td>
-            <td>${h.anotacao || "(sem anotação)"}</td>
-            <td class="${h.compareceu === 'Sim' ? 'status-sim' : 'status-nao'}">${h.compareceu || "Não informado"}</td>
-          </tr>
-        `).join("");
-
-        document.getElementById("pHistorico").innerHTML = historicoHTML || "<tr><td colspan='3'>Nenhum histórico</td></tr>";
-
-      } catch {
-        alert("Erro ao buscar paciente");
-      }
-    });
-  </script>
-</body>
-</html>
+/* devanagari */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJbecmNE.woff2) format('woff2');
+  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJnecmNE.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiEyp8kv8JHgFVrJJfecg.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* devanagari */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z11lFc-K.woff2) format('woff2');
+  unicode-range: U+0900-097F, U+1CD0-1CF9, U+200C-200D, U+20A8, U+20B9, U+20F0, U+25CC, U+A830-A839, U+A8E0-A8FF, U+11B00-11B09;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1JlFc-K.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLEj6Z1xlFQ.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
